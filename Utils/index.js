@@ -82,7 +82,7 @@ class Utils {
         });
 
         // Replace channel ids with channel names
-        messageObject.guild.channels.forEach(channel => content = content.replace(`<#${channel.id}>`, `#${channel.name}`).trim());
+        messageObject.guild.channels.cache.forEach(channel => content = content.replace(`<#${channel.id}>`, `#${channel.name}`).trim());
 
         return content;
     }

@@ -4,6 +4,7 @@ const Utils = require('../Utils');
 const BotConfig = require('../BotConfig');
 const Colors = require('colors');
 const MessageManager = require('../Managers/MessageManager');
+const {MessageEmbed} = require("discord.js");
 
 class ArchiveCommand extends AbstractCommand {
     static beforeId = -1;
@@ -15,7 +16,7 @@ class ArchiveCommand extends AbstractCommand {
     }
 
     async execute(messageObject, client) {
-        if (!messageObject.member.hasPermission('ADMINISTRATOR')) {
+        if (!messageObject.member.permissions.has("ADMINISTRATOR")) {
             messageObject.channel.send(`${messageObject.author} - Only the Administrators can use this command!`);
             return;
         }
@@ -49,11 +50,12 @@ class ArchiveCommand extends AbstractCommand {
 
             if (!specifiedChannel) {
                 await messageObject.channel.send(`${messageObject.author} - Since the channel was not specified, performing an archiving of all channels!`);
-
-                guild.channels.forEach(async channel => {
+                for (const channel of guild.channels.cache) {
                     ArchiveCommand.beforeId = -1;
-                    await ArchiveCommand.traverse(client, channel, ArchiveCommand.beforeId, 0);
-                });
+                    if(channel[1].type === "GUILD_TEXT") {
+                        await ArchiveCommand.traverse(client, channel, ArchiveCommand.beforeId, 0);
+                    }
+                }
             } else {
                 await messageObject.channel.send(`${messageObject.author} - Making an archive of channel ${specifiedChannel}!`);
                 await ArchiveCommand.traverse(client, specifiedChannel, ArchiveCommand.beforeId, 0);
@@ -69,10 +71,16 @@ class ArchiveCommand extends AbstractCommand {
             }
 
             // Send the success message
-            await channel.send(new Discord.RichEmbed().setColor([0, 255, 255]).setDescription(`The archiving has been completed!\nIt took me **${hrend[0]} seconds** to do it.`));
+
+            await channel.send(
+                {embeds: [new MessageEmbed().setColor([0, 255, 255]).setDescription(`The archiving has been completed!\nIt took me **${hrend[0]} seconds** to do it.`)]}
+            )
+
         } catch (error) {
             console.log(error);
-            await channel.send(new Discord.RichEmbed().setColor([0, 255, 255]).setDescription(`The archiving failed because of an error, please check out the command line!`));
+            await channel.send(
+                {embeds: [new MessageEmbed().setColor([0, 255, 255]).setDescription(`The archiving failed because of an error, please check out the command line!`)]}
+            )
         }
     }
 
@@ -86,10 +94,12 @@ class ArchiveCommand extends AbstractCommand {
 
         cycle++;
 
-        if (BotConfig.debug)
-            console.log(`Fetching from ${channel.name} ... Cycle: ${cycle}`.green);
+        if (BotConfig.debug){
+            console.log(`Fetching from ${channel[1].name} ... Cycle: ${cycle}`.green);
+        }
 
-        channel.fetchMessages(options).then(async messages => {
+        await client.channels.fetch(channel[0]).then(async channelF => {
+            await channelF.messages.fetch(options).then(async messages => {
             if (!messages)
                 return;
 
@@ -97,12 +107,13 @@ class ArchiveCommand extends AbstractCommand {
                 return;
 
             if (BotConfig.debug)
-                console.log(`${messages.size.toString().cyan} ${'messages fetched from'.green} ${channel.name.cyan} - ${'Before id'.green}: ${before.toString().cyan}`.green);
+                console.log(`${messages.size.toString().cyan} ${'messages fetched from'.green} ${channelF.name.cyan} - ${'Before id'.green}: ${before.toString().cyan}`.green);
 
-            messages.forEach(async element => {
+            for (const elementMap of messages) {
+                let element = elementMap[1]
                 if (!element || ArchiveCommand.isItCached(element)) {
                     ArchiveCommand.beforeId = element.id;
-                    return;
+                    continue;
                 }
 
                 ArchiveCommand.cached.push({
@@ -115,9 +126,10 @@ class ArchiveCommand extends AbstractCommand {
                 await MessageManager.archiveMessage(client, element);
                 ArchiveCommand.beforeId = element.id;
                 ArchiveCommand.archived++;
-            });
+            }
 
-            await ArchiveCommand.traverse(client, channel, ArchiveCommand.beforeId, cycle);
+            return ArchiveCommand.traverse(client, channel, ArchiveCommand.beforeId, cycle);
+            });
         }).catch(console.error);
     }
 

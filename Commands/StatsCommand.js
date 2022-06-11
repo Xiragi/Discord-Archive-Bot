@@ -4,6 +4,7 @@ const BotConfig = require('../BotConfig');
 const Discord = require('discord.js');
 const PrettySize = require('prettysize');
 const ConfigurationManager = require('../Managers/ConfigurationManager');
+const {MessageEmbed} = require("discord.js");
 
 class StatsCommand extends AbstractCommand {
     constructor() {
@@ -31,7 +32,8 @@ class StatsCommand extends AbstractCommand {
         Total archived attachments: ${statistics.attachments}
         Total bandwith: ${PrettySize(statistics.totalBytes)}`;
 
-        messageObject.channel.send(new Discord.RichEmbed().setColor([0, 255, 255]).setDescription(message));
+        messageObject.channel.send(
+            {embeds: [new MessageEmbed().setColor([0, 255, 255]).setDescription(message)]});
     }
 }
 

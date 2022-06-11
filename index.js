@@ -1,5 +1,8 @@
 // Modules
-const Client = new (require('discord.js')).Client();
+const Client = new (require('discord.js')).Client({intents: [
+        "GUILDS",
+        "GUILD_MESSAGES"
+    ]});
 const BotConfig = require('./BotConfig');
 const Colors = require('colors');
 

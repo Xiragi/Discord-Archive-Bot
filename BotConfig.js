@@ -4,7 +4,12 @@ module.exports = {
     bot_prefix: '!',
 
     attachments_path: 'Attachments',
-    debug: true,
+    debug: false,
+
+
+    replication_settings:{
+        replication_enabled: false,
+    },
 
     database: {
         mongodb_user: '',

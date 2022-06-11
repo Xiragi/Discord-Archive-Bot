@@ -24,6 +24,11 @@ const messageSchema = new DB.Schema({
         required: true
     },
 
+    channelId: {
+        type: Number,
+        required: true
+    },
+
     message: {
         type: String,
         default: ''

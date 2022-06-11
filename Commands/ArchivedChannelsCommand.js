@@ -1,6 +1,7 @@
 const AbstractCommand = require('./AbstractCommand');
 const Message = require('../Model/Message');
 const Discord = require('discord.js');
+const Statistics = require("../Model/Statistics");
 
 class ArchivedChannelsCommand extends AbstractCommand {
     constructor() {

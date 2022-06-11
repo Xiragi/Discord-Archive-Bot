@@ -28,7 +28,7 @@ class MessageManager {
         }, { timeout: false });
 
         if (found) {
-            console.log(found);
+            /// console.log(found);
 
             if (BotConfig.debug)
                 console.log('This message has already been archived, skipping!');
@@ -37,10 +37,10 @@ class MessageManager {
         }
 
         // Get information about attachments in the message if there are any
-        const Attachments = (messageObject.attachments).array();
+        const Attachments = (messageObject.attachments)
         const foundAttachments = new Array();
 
-        if (Attachments && Attachments.length > 0) {
+        if (Attachments && Attachments.size > 0) {
             Attachments.forEach(attachment => {
                 if (!attachment)
                     return;
@@ -122,6 +122,7 @@ class MessageManager {
             const messageDbObject = new Message();
             messageDbObject.authorId = authorId;
             messageDbObject.authorName = authorName;
+            messageDbObject.channelId = messageObject.channel.id;
             messageDbObject.timestamp = messageObject.createdTimestamp;
             messageDbObject.channelName = messageObject.channel.name;
             messageDbObject.message = content;
@@ -146,16 +147,16 @@ class MessageManager {
                 statistics.messages = 1;
                 statistics.attachments = downloadedAttachments.length;
 
-                console.log(`Pushed into channels initial: ${messageObject.channel.name}`);
+                console.log(`Pushed into channels initial: ${messageObject.channel.id.toString()}`);
                 const channelsArray = new Array();
-                channelsArray.push(messageObject.channel.name);
+                channelsArray.push(messageObject.channel.id.toString());
 
                 statistics.channels = channelsArray;
                 statistics.totalBytes = totalBytes;
             } else {
-                if (!statistics.channels.includes(messageObject.channel.name)) {
-                    statistics.channels.push(messageObject.channel.name);
-                    console.log(`Pushed into channels: ${messageObject.channel.name}`)
+                if (!statistics.channels.includes(messageObject.channel.id.toString())) {
+                    statistics.channels.push(messageObject.channel.id.toString());
+                    console.log(`Pushed into channels: ${messageObject.channel.id}`)
                 }
 
                 statistics.messages++;
