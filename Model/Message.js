@@ -19,12 +19,27 @@ const messageSchema = new DB.Schema({
         index: true
     },
 
+    messageReferenced: {
+        type: String,
+        required: false,
+    },
+
+    editedTimestamp: {
+        type: String,
+        required: false,
+    },
+
     channelName: {
         type: String,
         required: true
     },
 
     channelId: {
+        type: Number,
+        required: true
+    },
+
+    guildID: {
         type: Number,
         required: true
     },

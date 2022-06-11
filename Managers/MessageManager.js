@@ -123,6 +123,13 @@ class MessageManager {
             messageDbObject.authorId = authorId;
             messageDbObject.authorName = authorName;
             messageDbObject.channelId = messageObject.channel.id;
+            messageDbObject.guildID = messageObject.guild.id;
+            if(messageObject.reference){
+                messageDbObject.messageReferenced = messageObject.reference.messageId
+            }
+            if(messageObject.editedTimestamp){
+                messageDbObject.editedTimestamp = messageObject.editedTimestamp
+            }
             messageDbObject.timestamp = messageObject.createdTimestamp;
             messageDbObject.channelName = messageObject.channel.name;
             messageDbObject.message = content;

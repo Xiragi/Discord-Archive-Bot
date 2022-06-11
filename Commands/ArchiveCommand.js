@@ -53,6 +53,8 @@ class ArchiveCommand extends AbstractCommand {
                 for (const channel of guild.channels.cache) {
                     ArchiveCommand.beforeId = -1;
                     if(channel[1].type === "GUILD_TEXT") {
+                        let name = channel[1].name;
+                        client.user.setActivity(name.slice(0,20), { type: 'WATCHING' });
                         await ArchiveCommand.traverse(client, channel, ArchiveCommand.beforeId, 0);
                     }
                 }

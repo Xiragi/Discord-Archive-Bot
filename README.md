@@ -1,3 +1,6 @@
+# This version is tailored to what I need, there are features removed from the original version
+
+
 # Discord-Archive-Bot
 
 Simple **Archiving** bot for Discord which archives or replicates the server in real time.
